@@ -11,7 +11,7 @@ alerting:
     static_configs:
     - targets: []
 scrape_configs:
-- job_name: pushgateway
+- job_name: node
   honor_timestamps: true
   scrape_interval: 15s
   scrape_timeout: 10s
