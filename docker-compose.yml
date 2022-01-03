@@ -8,6 +8,18 @@ volumes:
   grafana_data: {}
 
 services:
+  nano-prom-exporter:
+    build: .
+    container_name: nano-prom-exporter
+    restart: unless-stopped
+    environment:
+      - NANO_PROM_DEBUG=1
+    command: --rpchost host.docker.internal --rpc_port ${RPC_PORT} --push_gateway http://pushgateway:9091
+    depends_on:
+      - pushgateway
+    networks:
+      - monitoring
+      
   pushgateway:
     image: prom/pushgateway:latest
     container_name: pushgateway
@@ -56,14 +68,3 @@ services:
     networks:
       - monitoring
   
-  nano-prom-exporter:
-    build: .
-    container_name: nano-prom-exporter
-    restart: unless-stopped
-    environment:
-      - NANO_PROM_DEBUG=1
-    command: --rpchost host.docker.internal --push_gateway http://pushgateway:9091
-    depends_on:
-      - pushgateway
-    networks:
-      - monitoring
