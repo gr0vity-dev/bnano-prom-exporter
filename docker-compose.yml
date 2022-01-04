@@ -4,8 +4,11 @@ networks:
   monitoring:
     
 volumes:
-  # prometheus_data: {}
   grafana_data: {}
+  prometheus_data:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
 
 services:
   nano-prom-exporter:
@@ -14,7 +17,7 @@ services:
     restart: unless-stopped
     environment:
       - NANO_PROM_DEBUG=1
-    command: --rpchost host.docker.internal --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091
+    command: --rpchost host.docker.internal --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091 --interval 3
     depends_on:
       - pushgateway
     networks:
@@ -37,8 +40,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      # - prometheus_data:/prometheus
-    # tmpfs: /prometheus
+      - prometheus_data:/prometheus
+    # tmpfs: /prometheus:uid=99
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
