@@ -12,67 +12,66 @@ This script requires
 """
 
 import argparse
+import logging
+import time
 from socket import gethostname
-from time import sleep
 
 from prometheus_client import CollectorRegistry, Histogram
 
 from .config import Config
 from .nanoRPC import nanoRPC
 from .nanoStats import nano_nodeProcess, nanoProm
+from .repeatedTimer import RepeatedTimer
 
-parser = argparse.ArgumentParser(
-    prog="nano_prom", description="configuration values")
-parser.add_argument("--rpchost", help="\"[::1]\" default\thost string",
-                    default="[::1]", action="store")
-parser.add_argument("--rpc_port", help="\"7076\" default\trpc port",
-                    default="7076", action="store")
-parser.add_argument("--datapath", help="\"~\\Nano\" as default",
-                    default="~\\Nano\\", action="store")
+logging.basicConfig(format="%(asctime)s %(levelname)-8s %(message)s", level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+parser = argparse.ArgumentParser(prog="nano_prom", description="configuration values")
+parser.add_argument("--rpchost", help='"[::1]" default\thost string', default="[::1]", action="store")
+parser.add_argument("--rpc_port", help='"7076" default\trpc port', default="7076", action="store")
+parser.add_argument("--datapath", help='"~\\Nano" as default', default="~\\Nano\\", action="store")
 parser.add_argument(
     "--push_gateway",
-    help="\"http://localhost:9091\" prometheus push gateway",
+    help='"http://localhost:9091" prometheus push gateway',
     default="http://localhost:9091",
-    action="store")
-parser.add_argument("--hostname", help="job name to pass to prometheus",
-                    default=gethostname(), action="store")
-parser.add_argument("--interval", help="interval to sleep",
-                    default="10", action="store")
+    action="store",
+)
+parser.add_argument("--hostname", help="job name to pass to prometheus", default=gethostname(), action="store")
+parser.add_argument("--interval", help="interval to sleep", default="10", action="store", type=int)
+parser.add_argument("--username", help="Username for basic auth on push_gateway", default="", action="store")
+parser.add_argument("--password", help="Password for basic auth on push_gateway", default="", action="store")
 parser.add_argument(
-    "--username",
-    help="Username for basic auth on push_gateway",
-    default="",
-    action="store")
-parser.add_argument(
-    "--password",
-    help="Password for basic auth on push_gateway",
-    default="",
-    action="store")
-parser.add_argument(
-    "--config_path",
-    help="Path to config.ini \nIgnores other CLI arguments",
-    default=None,
-    action="store")
+    "--config_path", help="Path to config.ini \nIgnores other CLI arguments", default=None, action="store"
+)
 
 args = parser.parse_args()
 cnf = Config(args)
 registry = CollectorRegistry()
-rpcLatency = Histogram('nano_rpc_response', "response time from rpc calls", [
-                       'method'], registry=registry)
+rpcLatency = Histogram("nano_rpc_response", "response time from rpc calls", ["method"], registry=registry)
 
 statsCollection = nanoRPC(cnf)
 promCollection = nanoProm(cnf, registry)
 process_stats = nano_nodeProcess(promCollection)
 
+last_time = 0
 
 def main():
-    while True:
+    logging.debug("Starting main loop")
+
+    try:
         stats = statsCollection.gatherStats(rpcLatency)
         process_stats.node_process_stats()
         promCollection.update(stats)
         promCollection.pushStats(registry)
-        sleep(int(cnf.interval))
+    except Exception as e:
+        logging.exception(e)
+
+    global last_time
+    curr_time = time.time()
+    logging.debug("Finished main loop, elapsed time: %s", curr_time - last_time)
+    last_time = curr_time
 
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    RepeatedTimer(cnf.interval, main).start()
