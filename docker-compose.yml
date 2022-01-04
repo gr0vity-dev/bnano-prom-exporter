@@ -22,6 +22,8 @@ services:
       - pushgateway
     networks:
       - monitoring
+    profiles:
+      - exporter
       
   pushgateway:
     image: prom/pushgateway:latest
@@ -35,6 +37,7 @@ services:
       - 9091:9091
     profiles:
       - grafana-stack
+      - exporter
 
   prometheus:
     image: prom/prometheus:latest
@@ -58,6 +61,7 @@ services:
       - 9090:9090
     profiles:
       - grafana-stack
+      - exporter
 
   grafana:
     image: grafana/grafana:8.3.0
@@ -77,3 +81,4 @@ services:
       - monitoring
     profiles:
       - grafana-stack
+      - exporter
