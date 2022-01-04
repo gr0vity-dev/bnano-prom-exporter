@@ -11,20 +11,6 @@ volumes:
       device: tmpfs
 
 services:
-  # nano-prom-exporter:
-  #   build: .
-  #   container_name: nano-prom-exporter
-  #   restart: unless-stopped
-  #   environment:
-  #     - NANO_PROM_DEBUG=1
-  #   command: --rpchost host.docker.internal --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091 --interval 3
-  #   depends_on:
-  #     - pushgateway
-  #   networks:
-  #     - monitoring
-  #   profiles:
-  #     - prebuilt
-
   nano-prom-exporter:
     build: .
     container_name: nano-prom-exporter
