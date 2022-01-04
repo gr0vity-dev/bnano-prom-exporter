@@ -11,12 +11,26 @@ volumes:
       device: tmpfs
 
 services:
+  # nano-prom-exporter:
+  #   build: .
+  #   container_name: nano-prom-exporter
+  #   restart: unless-stopped
+  #   environment:
+  #     - NANO_PROM_DEBUG=1
+  #   command: --rpchost host.docker.internal --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091 --interval 3
+  #   depends_on:
+  #     - pushgateway
+  #   networks:
+  #     - monitoring
+  #   profiles:
+  #     - prebuilt
+
   nano-prom-exporter:
     build: .
     container_name: nano-prom-exporter
     restart: unless-stopped
-    environment:
-      - NANO_PROM_DEBUG=1
+    # environment:
+      # - NANO_PROM_DEBUG=1
     command: --rpchost host.docker.internal --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091 --interval 3
     depends_on:
       - pushgateway
@@ -33,6 +47,8 @@ services:
       - monitoring
     ports:
       - 9091:9091
+    profiles:
+      - grafana-stack
 
   prometheus:
     image: prom/prometheus:latest
@@ -54,6 +70,8 @@ services:
       - monitoring
     ports:
       - 9090:9090
+    profiles:
+      - grafana-stack
 
   grafana:
     image: grafana/grafana:8.3.0
@@ -71,4 +89,5 @@ services:
       # - ./grafana/config.monitoring
     networks:
       - monitoring
-  
+    profiles:
+      - grafana-stack
