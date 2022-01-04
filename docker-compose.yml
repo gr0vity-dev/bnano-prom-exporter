@@ -4,7 +4,7 @@ networks:
   monitoring:
     
 volumes:
-  prometheus_data: {}
+  # prometheus_data: {}
   grafana_data: {}
 
 services:
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
     environment:
       - NANO_PROM_DEBUG=1
-    command: --rpchost host.docker.internal --rpc_port ${RPC_PORT} --push_gateway http://pushgateway:9091
+    command: --rpchost host.docker.internal --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091
     depends_on:
       - pushgateway
     networks:
@@ -37,7 +37,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
+      # - prometheus_data:/prometheus
+    # tmpfs: /prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -52,7 +53,7 @@ services:
       - 9090:9090
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:8.3.0
     container_name: grafana
     restart: unless-stopped
     user: "472"

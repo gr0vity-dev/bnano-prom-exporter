@@ -1,0 +1,5 @@
+# start
+RPC_PORT=17076 docker-compose up
+
+# clear data
+docker-compose rm -v -f prometheus
