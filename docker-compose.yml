@@ -1,7 +1,7 @@
 version: '3.8'
 
 networks:
-  monitoring:
+  monitoring: {}
     
 volumes:
   grafana_data: {}
@@ -64,7 +64,8 @@ services:
       - exporter
 
   grafana:
-    image: grafana/grafana:8.3.0
+    # 8.3.3 - terrible dashboard graph flashing
+    image: grafana/grafana:8.3.2
     container_name: grafana
     restart: unless-stopped
     user: "472"
