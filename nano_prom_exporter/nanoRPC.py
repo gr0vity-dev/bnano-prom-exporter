@@ -35,11 +35,7 @@ class nanoStats:
         self.ConfirmationHistory = collection['confirmation_history']
         self.Peers = collection['peers']
         self.StatsCounters = collection['stats_counters']
-        try:
-            self.StatsObjects = collection['stats_objects']['node']
-        except Exception as e:
-            print(e.__str__())
-            self.StatsObjects = None
+        self.StatsObjects = collection['stats_objects']['node']
         self.Uptime = collection['uptime']['seconds']
         self.Version = collection['version']
         self.Frontiers = collection['frontier_count']['count']
@@ -86,23 +82,15 @@ class nanoRPC:
             "telemetry": Telemetry}
 
     def rpcWrapper(self, msg):
-        try:
-            connection = requests.post(url=self.uri, json=msg)
-        except Exception as e:
-            if os.getenv("NANO_PROM_DEBUG"):
-                print(e)
-            return None
+        connection = requests.post(url=self.uri, json=msg)
         return connection
 
     def gatherStats(self, rpcLatency):
         for a in self.Commands:
-            try:
-                with rpcLatency.labels(a).time():
-                    response = self.rpcWrapper(self.Commands[a])
-                    response = response.json()
-                    self.lastData[a] = response
-            except Exception as e:
-                if os.getenv("NANO_PROM_DEBUG"):
-                    print(e)
+            with rpcLatency.labels(a).time():
+                response = self.rpcWrapper(self.Commands[a])
+                response = response.json()
+                self.lastData[a] = response
+                
         stats = nanoStats(self.lastData)
         return stats

@@ -57,11 +57,11 @@ process_stats = nano_nodeProcess(promCollection)
 last_time = 0
 
 def main():
-    logging.debug("Starting main loop")
+    logging.info("Starting main loop")
 
     try:
         stats = statsCollection.gatherStats(rpcLatency)
-        process_stats.node_process_stats()
+        # process_stats.node_process_stats()
         promCollection.update(stats)
         promCollection.pushStats(registry)
     except Exception as e:
@@ -69,7 +69,7 @@ def main():
 
     global last_time
     curr_time = time.time()
-    logging.debug("Finished main loop, elapsed time: %s", curr_time - last_time)
+    logging.info("Finished main loop, elapsed time: %s", curr_time - last_time)
     last_time = curr_time
 
 
