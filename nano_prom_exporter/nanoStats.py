@@ -1,3 +1,4 @@
+import logging
 import os
 
 import psutil
@@ -7,12 +8,13 @@ from prometheus_client.exposition import basic_auth_handler
 
 class telemetry_raw(object):
     def __init__(self, m):
-        try:
+        if 'address' in m:
             self.endpoint = (str(m['address']) + ":" + str(m['port']))
             self.node_id = m['node_id']
-        except KeyError:
+        else:
             self.endpoint = "avg_telemetry"
             self.node_id = "avg_telemetry"
+
         self.block_count = m['block_count']
         self.cemented_count = m['cemented_count']
         self.unchecked_count = m['unchecked_count']
@@ -254,124 +256,116 @@ class nanoProm:
             'network_raw_rx', 'Raw rx from psutil', registry=registry)
 
     def update(self, stats):
-        try:
-            self.ActiveDifficulty.set(stats.ActiveDifficulty)
-            self.NetworkReceiveCurrent.set(stats.NetworkReceiveCurrent)
-            self.Uptime.set(stats.Uptime)
-            self.Frontiers.set(stats.Frontiers)
-            if os.path.exists(self.config.node_data_path + "data.ldb"):
-                self.databaseSize.labels("lmdb").set(
-                    os.path.getsize(self.config.node_data_path + "data.ldb"))
-                self.databaseVolumeFree.set(
-                    psutil.disk_usage(self.config.node_data_path).free)
-                self.databaseVolumeTotal.set(
-                    psutil.disk_usage(self.config.node_data_path).total)
-                self.databaseVolumeUsed.set(
-                    psutil.disk_usage(self.config.node_data_path).used)
-            self.QuorumDelta.set(stats.QuorumDelta)
-            self.OnlineStake.set(stats.OnlineStake)
-            self.PeersStake.set(stats.PeersStake)
-            self.TrendedStake.set(stats.TrendedStake)
-            for a in stats.BlockCount:
-                self.BlockCount.labels(a).set(stats.BlockCount[a])
-            self.PeersCount.set(len(stats.Peers['peers']))
-            for a in (stats.TelemetryRaw + [stats.Telemetry]):
-                endpoint = telemetry_raw(a)
-                self.telemetry_raw_blocks.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.block_count)
-                self.telemetry_raw_cemented.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.cemented_count)
-                self.telemetry_raw_unchecked.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.unchecked_count)
-                self.telemetry_raw_accounts.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.account_count)
-                self.telemetry_raw_bandwidth.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.bandwidth_cap)
-                self.telemetry_raw_peers.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.peer_count)
-                self.telemetry_raw_protocol.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.protocol)
-                self.telemetry_raw_major.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.major)
-                self.telemetry_raw_minor.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.minor)
-                self.telemetry_raw_patch.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.patch)
-                self.telemetry_raw_pre.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.pre_release)
-                self.telemetry_raw_uptime.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.uptime)
-                self.telemetry_raw_maker.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.maker)
-                self.telemetry_raw_timestamp.labels(
-                    endpoint=endpoint.endpoint).set(endpoint.timestamp)
+        self.ActiveDifficulty.set(stats.ActiveDifficulty)
+        self.NetworkReceiveCurrent.set(stats.NetworkReceiveCurrent)
+        self.Uptime.set(stats.Uptime)
+        self.Frontiers.set(stats.Frontiers)
 
-        except Exception as e:
-            if os.getenv("NANO_PROM_DEBUG"):
-                print(e)
-        try:
+        if os.path.exists(self.config.node_data_path + "data.ldb"):
+            self.databaseSize.labels("lmdb").set(
+                os.path.getsize(self.config.node_data_path + "data.ldb"))
+            self.databaseVolumeFree.set(
+                psutil.disk_usage(self.config.node_data_path).free)
+            self.databaseVolumeTotal.set(
+                psutil.disk_usage(self.config.node_data_path).total)
+            self.databaseVolumeUsed.set(
+                psutil.disk_usage(self.config.node_data_path).used)
+
+        self.QuorumDelta.set(stats.QuorumDelta)
+        self.OnlineStake.set(stats.OnlineStake)
+        self.PeersStake.set(stats.PeersStake)
+        self.TrendedStake.set(stats.TrendedStake)
+        self.PeersCount.set(len(stats.Peers['peers']))
+
+        for a in stats.BlockCount:
+            self.BlockCount.labels(a).set(stats.BlockCount[a])
+
+        for a in (stats.TelemetryRaw + [stats.Telemetry]):
+            endpoint = telemetry_raw(a)
+
+            self.telemetry_raw_blocks.labels(
+                endpoint=endpoint.endpoint).set(endpoint.block_count)
+            self.telemetry_raw_cemented.labels(
+                endpoint=endpoint.endpoint).set(endpoint.cemented_count)
+            self.telemetry_raw_unchecked.labels(
+                endpoint=endpoint.endpoint).set(endpoint.unchecked_count)
+            self.telemetry_raw_accounts.labels(
+                endpoint=endpoint.endpoint).set(endpoint.account_count)
+            self.telemetry_raw_bandwidth.labels(
+                endpoint=endpoint.endpoint).set(endpoint.bandwidth_cap)
+            self.telemetry_raw_peers.labels(
+                endpoint=endpoint.endpoint).set(endpoint.peer_count)
+            self.telemetry_raw_protocol.labels(
+                endpoint=endpoint.endpoint).set(endpoint.protocol)
+            self.telemetry_raw_major.labels(
+                endpoint=endpoint.endpoint).set(endpoint.major)
+            self.telemetry_raw_minor.labels(
+                endpoint=endpoint.endpoint).set(endpoint.minor)
+            self.telemetry_raw_patch.labels(
+                endpoint=endpoint.endpoint).set(endpoint.patch)
+            self.telemetry_raw_pre.labels(
+                endpoint=endpoint.endpoint).set(endpoint.pre_release)
+            self.telemetry_raw_uptime.labels(
+                endpoint=endpoint.endpoint).set(endpoint.uptime)
+            self.telemetry_raw_maker.labels(
+                endpoint=endpoint.endpoint).set(endpoint.maker)
+            self.telemetry_raw_timestamp.labels(
+                endpoint=endpoint.endpoint).set(endpoint.timestamp)
+
+        if int(stats.ConfirmationHistory['confirmation_stats']['count']) > 0:
             self.ConfirmationHistory.labels(
                 stats.ConfirmationHistory['confirmation_stats']['count']).set(
                 stats.ConfirmationHistory['confirmation_stats']['average'])
-        except Exception as e:
-            if os.getenv("NANO_PROM_DEBUG"):
-                print(e)
-        try:
-            for entry in stats.StatsCounters['entries']:
-                self.StatsCounters.labels(
-                    entry['type'],
-                    entry['detail'],
-                    entry['dir']).set(
-                    entry['value'])
-            self.Version.info(
-                {
-                    'rpc_version': stats.Version['rpc_version'],
-                    'store_version': stats.Version['store_version'],
-                    'protocol_version': stats.Version['protocol_version'],
-                    'node_vendor': stats.Version['node_vendor'],
-                    'store_vendor': stats.Version['store_vendor'],
-                    'network': stats.Version['network'],
-                    'network_identifier': stats.Version['network_identifier'],
-                    'build_info': stats.Version['build_info']})
-        except Exception as e:
-            if os.getenv("NANO_PROM_DEBUG"):
-                print(e)
-        try:
-            for l1 in stats.StatsObjects:
-                for l2 in stats.StatsObjects[l1]:
-                    if 'size' in stats.StatsObjects[l1][l2]:
-                        self.StatsObjectsSize.labels(l1, l2, "none").set(
-                            stats.StatsObjects[l1][l2]['size'])
-                        self.StatsObjectsCount.labels(l1, l2, "none").set(
-                            stats.StatsObjects[l1][l2]['count'])
-                        if os.getenv("NANO_PROM_DEBUG"):
-                            print(
-                                "l2",
-                                l1,
-                                l2,
-                                stats.StatsObjects[l1][l2]['size'],
-                                stats.StatsObjects[l1][l2]['count'])
-                    else:
-                        for l3 in stats.StatsObjects[l1][l2]:
-                            if 'size' in stats.StatsObjects[l1][l2][l3]:
-                                self.StatsObjectsSize.labels(l1, l2, l3).set(
-                                    stats.StatsObjects[l1][l2][l3]['size'])
-                                self.StatsObjectsCount.labels(l1, l2, l3).set(
-                                    stats.StatsObjects[l1][l2][l3]['count'])
-                                if os.getenv("NANO_PROM_DEBUG"):
-                                    print(
-                                        "l3",
-                                        l1,
-                                        l2,
-                                        l3,
-                                        stats.StatsObjects
-                                        [l1][l2][l3]['size'],
-                                        stats.StatsObjects
-                                        [l1][l2][l3]['count'])
 
-        except Exception as e:
-            if os.getenv("NANO_PROM_DEBUG"):
-                print(e)
+        for entry in stats.StatsCounters['entries']:
+            self.StatsCounters.labels(
+                entry['type'],
+                entry['detail'],
+                entry['dir']).set(
+                entry['value'])
+                
+        self.Version.info(
+            {
+                'rpc_version': stats.Version['rpc_version'],
+                'store_version': stats.Version['store_version'],
+                'protocol_version': stats.Version['protocol_version'],
+                'node_vendor': stats.Version['node_vendor'],
+                'store_vendor': stats.Version['store_vendor'],
+                'network': stats.Version['network'],
+                'network_identifier': stats.Version['network_identifier'],
+                'build_info': stats.Version['build_info']})
+
+        for l1 in stats.StatsObjects:
+            for l2 in stats.StatsObjects[l1]:
+                if 'size' in stats.StatsObjects[l1][l2]:
+                    self.StatsObjectsSize.labels(l1, l2, "none").set(
+                        stats.StatsObjects[l1][l2]['size'])
+                    self.StatsObjectsCount.labels(l1, l2, "none").set(
+                        stats.StatsObjects[l1][l2]['count'])
+                    if os.getenv("NANO_PROM_DEBUG"):
+                        logging.debug(
+                            "l2 %s %s %s %s",
+                            l1,
+                            l2,
+                            stats.StatsObjects[l1][l2]['size'],
+                            stats.StatsObjects[l1][l2]['count'])
+                else:
+                    for l3 in stats.StatsObjects[l1][l2]:
+                        if 'size' in stats.StatsObjects[l1][l2][l3]:
+                            self.StatsObjectsSize.labels(l1, l2, l3).set(
+                                stats.StatsObjects[l1][l2][l3]['size'])
+                            self.StatsObjectsCount.labels(l1, l2, l3).set(
+                                stats.StatsObjects[l1][l2][l3]['count'])
+                            if os.getenv("NANO_PROM_DEBUG"):
+                                logging.debug(
+                                    "l3 %s %s %s %s %s",
+                                    l1,
+                                    l2,
+                                    l3,
+                                    stats.StatsObjects
+                                    [l1][l2][l3]['size'],
+                                    stats.StatsObjects
+                                    [l1][l2][l3]['count'])
 
     @staticmethod
     def auth_handler(url, method, timeout, headers, data, creds):
@@ -386,28 +380,24 @@ class nanoProm:
 
     def pushStats(self, registry):
         for gateway, creds in self.config.push_gateway.items():
-            try:
-                if creds['username'] != "":
-                    def handle(
-                        url,
-                        method,
-                        timeout,
-                        headers,
-                        data): return self.auth_handler(
-                        url,
-                        method,
-                        timeout,
-                        headers,
-                        data,
-                        creds)
-                    push_to_gateway(
-                        gateway,
-                        job=self.config.hostname,
-                        registry=registry,
-                        handler=handle)
-                else:
-                    push_to_gateway(
-                        gateway, job=self.config.hostname, registry=registry)
-            except Exception as e:
-                if os.getenv("NANO_PROM_DEBUG"):
-                    print(e)
+            if creds['username'] != "":
+                def handle(
+                    url,
+                    method,
+                    timeout,
+                    headers,
+                    data): return self.auth_handler(
+                    url,
+                    method,
+                    timeout,
+                    headers,
+                    data,
+                    creds)
+                push_to_gateway(
+                    gateway,
+                    job=self.config.hostname,
+                    registry=registry,
+                    handler=handle)
+            else:
+                push_to_gateway(
+                    gateway, job=self.config.hostname, registry=registry)
