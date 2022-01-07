@@ -107,3 +107,14 @@ password = testing ; password for basic auth
 ### DEBUGGING
 
 Setting `NANO_PROM_DEBUG` to `1` will print exceptions, useful for debugging
+
+
+### PROMETHEUS GRAFANA DOCKER STACK
+
+run:
+
+`RPC_PORT=17076 docker-compose --profile exporter up`
+
+or without nano prom exporter:
+
+`docker-compose --profile grafana-stack up`
