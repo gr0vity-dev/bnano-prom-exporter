@@ -20,3 +20,6 @@ scrape_configs:
   static_configs:
   - targets:
     - pushgateway:9091
+  metric_relabel_configs :
+  - regex: exported_job
+    action: labeldrop
