@@ -59,41 +59,20 @@ class nano_nodeProcess:
         nano_pid = self.find_procs_by_name('nano_node')
         for a in nano_pid:
             self.get_threads_cpu_percent(a)
-            try:
-                self.nanoProm.rss.labels(a.pid).set(a.memory_info().rss)
-            except Exception as e:
-                if os.getenv("NANO_PROM_DEBUG"):
-                    print(e)
-            try:
-                self.nanoProm.vms.labels(a.pid).set(a.memory_info().vms)
-            except Exception as e:
-                if os.getenv("NANO_PROM_DEBUG"):
-                    print(e)
-            try:
-                self.nanoProm.pp.labels(a.pid).set(a.memory_info().paged_pool)
-            except Exception as e:
-                if os.getenv("NANO_PROM_DEBUG"):
-                    print(e)
-            try:
-                self.nanoProm.cpu.labels(a.pid).set(
-                    a.cpu_percent(interval=0.1))
-            except Exception as e:
-                if os.getenv("NANO_PROM_DEBUG"):
-                    print(e)
+            self.nanoProm.rss.labels(a.pid).set(a.memory_info().rss)
+            self.nanoProm.vms.labels(a.pid).set(a.memory_info().vms)
+            self.nanoProm.pp.labels(a.pid).set(a.memory_info().paged_pool)
+            self.nanoProm.cpu.labels(a.pid).set(a.cpu_percent(interval=0.1))
 
     def get_threads_cpu_percent(self, p, interval=0.1):
-        try:
-            total_percent = p.cpu_percent(interval)
-            total_time = sum(p.cpu_times())
-            for t in p.threads():
-                self.nanoProm.threads.labels(p.pid, t.id).set(
-                    total_percent * (
-                        (
-                            t.system_time + t.user_time
-                        ) / total_time))
-        except Exception as e:
-            if os.getenv("NANO_PROM_DEBUG"):
-                print(e)
+        total_percent = p.cpu_percent(interval)
+        total_time = sum(p.cpu_times())
+        for t in p.threads():
+            self.nanoProm.threads.labels(p.pid, t.id).set(
+                total_percent * (
+                    (
+                        t.system_time + t.user_time
+                    ) / total_time))
 
 
 class nanoProm:
@@ -280,7 +259,7 @@ class nanoProm:
         for a in stats.BlockCount:
             self.BlockCount.labels(a).set(stats.BlockCount[a])
 
-        for a in (stats.TelemetryRaw + [stats.Telemetry]):
+        for a in (stats.TelemetryRaw or [] + [stats.Telemetry]):
             endpoint = telemetry_raw(a)
 
             self.telemetry_raw_blocks.labels(
