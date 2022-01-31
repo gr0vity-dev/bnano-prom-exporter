@@ -259,7 +259,7 @@ class nanoProm:
         for a in stats.BlockCount:
             self.BlockCount.labels(a).set(stats.BlockCount[a])
 
-        for a in (stats.TelemetryRaw + [stats.Telemetry]):
+        for a in (stats.TelemetryRaw or [] + [stats.Telemetry]):
             endpoint = telemetry_raw(a)
 
             self.telemetry_raw_blocks.labels(
