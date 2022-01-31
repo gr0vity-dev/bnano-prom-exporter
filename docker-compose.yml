@@ -5,10 +5,7 @@ networks:
     
 volumes:
   grafana_data: {}
-  prometheus_data:
-    driver_opts:
-      type: tmpfs
-      device: tmpfs
+  prometheus_data: {}
 
 services:
   nano-prom-exporter:
@@ -16,7 +13,7 @@ services:
     restart: unless-stopped
     environment:
       - NANO_PROM_DEBUG=1
-    command: --rpchost host.docker.internal --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091
+    command: --rpchost ${RPC_HOST:-host.docker.internal} --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091
     depends_on:
       - pushgateway
     networks:
