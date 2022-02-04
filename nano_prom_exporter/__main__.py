@@ -59,13 +59,10 @@ last_time = 0
 def main():
     logging.info("Starting main loop")
 
-    try:
         stats = statsCollection.gatherStats(rpcLatency)
         # process_stats.node_process_stats()
         promCollection.update(stats)
         promCollection.pushStats(registry)
-    except Exception as e:
-        logging.exception(e)
 
     global last_time
     curr_time = time.time()
@@ -74,4 +71,10 @@ def main():
 
 
 if __name__ == "__main__":
-    RepeatedTimer(cnf.interval, main).start()
+    # RepeatedTimer(cnf.interval, main).start()
+    while True:
+        try:
+            main()
+            time.sleep(args.interval)
+        except Exception as e:
+            logging.exception(e)

@@ -80,10 +80,10 @@ class nanoRPC:
             "confirmation_quorum": Quorum,
             "telemetry_raw": TelemetryRaw,
             "telemetry": Telemetry}
-
+            
     def rpcWrapper(self, msg):
-        connection = requests.post(url=self.uri, json=msg)
-        return connection
+        response = requests.post(url=self.uri, json=msg, timeout=7)
+        return response
 
     def gatherStats(self, rpcLatency):
         for a in self.Commands:
