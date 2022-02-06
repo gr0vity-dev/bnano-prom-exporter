@@ -24,8 +24,8 @@ from .nanoStats import nano_nodeProcess, nanoProm
 from .repeatedTimer import RepeatedTimer
 
 logging.basicConfig(format="%(asctime)s %(levelname)-8s %(message)s", level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
-logging.getLogger("requests").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
+# logging.getLogger("requests").setLevel(logging.WARNING)
+# logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 parser = argparse.ArgumentParser(prog="nano_prom", description="configuration values")
 parser.add_argument("--rpchost", help='"[::1]" default\thost string', default="[::1]", action="store")
@@ -59,10 +59,10 @@ last_time = 0
 def main():
     logging.info("Starting main loop")
 
-        stats = statsCollection.gatherStats(rpcLatency)
-        # process_stats.node_process_stats()
-        promCollection.update(stats)
-        promCollection.pushStats(registry)
+    stats = statsCollection.gatherStats(rpcLatency)
+    # process_stats.node_process_stats()
+    promCollection.update(stats)
+    promCollection.pushStats(registry)
 
     global last_time
     curr_time = time.time()
@@ -75,6 +75,7 @@ if __name__ == "__main__":
     while True:
         try:
             main()
-            time.sleep(args.interval)
         except Exception as e:
             logging.exception(e)
+
+        time.sleep(args.interval)
