@@ -2,6 +2,9 @@ version: '3.8'
 
 networks:
   monitoring: {}
+  nano-network:
+    external:
+      name: ${NANO_NETWORK:-nano-network}
     
 volumes:
   grafana_data: {}
@@ -18,6 +21,7 @@ services:
       - pushgateway
     networks:
       - monitoring
+      - nano-network
     profiles:
       - exporter
       
