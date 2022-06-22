@@ -1,5 +1,7 @@
 # bnano-prom for bnano.info
 
+Forked from https://github.com/fikumikudev/nano-prom-exporter
+
 ## A simple metrics exporter for a nano-node daemon
 
 ### Requirements
