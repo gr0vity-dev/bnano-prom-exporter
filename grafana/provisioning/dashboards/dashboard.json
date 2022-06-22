@@ -68,7 +68,7 @@
   "panels": [
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -79,7 +79,7 @@
       "panels": [
         {
           "columns": [],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "description": "",
           "fontSize": "100%",
           "gridPos": {
@@ -158,7 +158,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -172,7 +172,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -258,7 +258,7 @@
         {
           "cacheTimeout": null,
           "columns": [],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "description": "Method Calls are averaged over all Remotes\nRemotes are averaged over all Methods",
           "fontSize": "100%",
           "gridPos": {
@@ -323,7 +323,7 @@
         {
           "cacheTimeout": null,
           "columns": [],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "description": "Method Calls are averaged over all Remotes\nRemotes are averaged over all Methods",
           "fontSize": "100%",
           "gridPos": {
@@ -387,7 +387,7 @@
         },
         {
           "columns": [],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fontSize": "100%",
           "gridPos": {
             "h": 13,
@@ -591,7 +591,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -608,7 +608,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -696,7 +696,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -783,7 +783,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "description": "Blocks per second from block_count RPC",
       "fill": 1,
       "fillGradient": 0,
@@ -882,7 +882,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -896,7 +896,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -992,7 +992,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1090,7 +1090,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1188,7 +1188,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1286,7 +1286,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1384,7 +1384,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1482,7 +1482,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1580,7 +1580,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1678,7 +1678,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1776,7 +1776,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1874,7 +1874,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -1974,7 +1974,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1988,7 +1988,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2085,7 +2085,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2184,7 +2184,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2283,7 +2283,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2382,7 +2382,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2481,7 +2481,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2580,7 +2580,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2679,7 +2679,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2778,7 +2778,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2877,7 +2877,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -2976,7 +2976,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -3076,7 +3076,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3093,7 +3093,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "description": "",
       "fill": 0,
       "fillGradient": 0,
@@ -3188,7 +3188,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3202,7 +3202,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -3301,7 +3301,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3315,7 +3315,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -3415,7 +3415,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -3517,7 +3517,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 0,
           "fillGradient": 0,
           "gridPos": {
@@ -3620,7 +3620,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3634,7 +3634,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -3732,7 +3732,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -3832,7 +3832,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -3933,7 +3933,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3947,7 +3947,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "description": "",
           "fill": 0,
           "fillGradient": 0,
@@ -4047,7 +4047,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "description": "",
           "fill": 0,
           "fillGradient": 0,
@@ -4149,7 +4149,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "description": "",
           "fill": 0,
           "fillGradient": 0,
@@ -4252,7 +4252,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": "LocalNode",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4263,7 +4263,7 @@
       "panels": [
         {
           "columns": [],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "LocalNode",
           "fontSize": "100%",
           "gridPos": {
             "h": 9,
@@ -4334,7 +4334,7 @@
       {
         "allValue": "",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": "LocalNode",
         "definition": "nano_block_count{job=~\".*\",type=\"count\"}",
         "hide": 0,
         "includeAll": false,
@@ -4356,7 +4356,7 @@
       {
         "allValue": "",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": "LocalNode",
         "definition": "nano_stats_counters",
         "hide": 0,
         "includeAll": true,
@@ -4378,7 +4378,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": "LocalNode",
         "definition": "nano_stats_counters",
         "hide": 0,
         "includeAll": true,
@@ -4430,7 +4430,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": "LocalNode",
         "definition": "nano_stats_objects_count",
         "hide": 0,
         "includeAll": true,
