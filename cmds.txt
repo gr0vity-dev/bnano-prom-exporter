@@ -1,8 +1,8 @@
 # start
-RPC_PORT=17076 docker-compose --profile exporter up
+docker-compose up 
 
-# start grafana-prometheus stack only
-RPC_PORT=17076 docker-compose --profile grafana-stack up
+# start run in background :
+docker-compose up -d 
 
 # clear data
 docker-compose rm -v -f prometheus
