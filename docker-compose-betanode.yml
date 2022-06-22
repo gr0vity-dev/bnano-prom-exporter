@@ -1,0 +1,26 @@
+version: '3.8'
+#Example of a compose file running the nano beta node 
+#The .env default variables will work with the node defined in this compose file
+
+networks:
+  nano-beta:
+    driver: bridge
+    name: nano-beta #NANO_NODE_DOCKER_NETWORK (from .env)
+
+services:
+  node_b:
+    image: nanocurrency/nano:V23.3
+    command: nano_node daemon --network=beta -l
+    container_name: node_b  #RPC_HOST (from .env)
+    ulimits:
+      nofile: 65535
+    restart: unless-stopped
+    ports:
+     - 54000:54000/udp
+     - 54000:54000
+     - '127.0.0.1:55000:55000' #RPC_PORT (from .env) . note the right part of the port definition is used ....:55000 !
+     - '127.0.0.1:57000:57000'
+    volumes:
+     - ~:/root
+    networks:
+     - nano-beta

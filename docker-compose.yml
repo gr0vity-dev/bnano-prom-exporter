@@ -1,82 +1,19 @@
 version: '3.8'
 
 networks:
-#  monitor: {}
   nano-beta:
     external:
-      name: ${DOCKER_NETWORK}
+      name: ${NANO_NODE_DOCKER_NETWORK}
     
-#volumes:
-#  grafana_data: {}
-#  prometheus_data: {}
-
 services:
   nano-prom-exporter:
+    container_name: nano-prom-exporter
     build: .
     restart: unless-stopped
     environment:
-      - NANO_PROM_DEBUG=1
+      - NANO_PROM_DEBUG=${NANO_PROM_DEBUG}
     command: --rpchost ${RPC_HOST:-host.docker.internal} --rpc_port ${RPC_PORT:-7076} --push_gateway https://prom-exporter.bnano.info
-#    depends_on:
-#      - pushgateway
     networks:
-#      - monitor
       - nano-beta
-    profiles:
-      - exporter
-      
-#  pushgateway:
-#    image: prom/pushgateway:latest
-#    restart: unless-stopped
-#    expose:
-#      - 9091
-#    networks:
-#      - monitor
-#    ports:
-#      - '127.0.0.1:3091:9091'
 #    profiles:
-#      - grafana-stack
-#      - exporter
-
-#  prometheus:
-#    image: prom/prometheus:latest
-#    restart: unless-stopped
-#    volumes:
-#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-#      - prometheus_data:/prometheus
-#    # tmpfs: /prometheus:uid=99
-#    command:
-#      - '--config.file=/etc/prometheus/prometheus.yml'
-#      - '--storage.tsdb.path=/prometheus'
-#      - '--web.console.libraries=/etc/prometheus/console_libraries'
-#      - '--web.console.templates=/etc/prometheus/consoles'
-#      - '--web.enable-lifecycle'
-#    expose:
-#      - 9090
-#    networks:
-#      - monitor
-#    ports:
-#      - '127.0.0.1:3090:9090'
-#    profiles:
-#      - grafana-stack
-#      - exporter#
-
-#  grafana:
-#    # 8.3.3 - terrible dashboard graph flashing
-#    image: grafana/grafana:8.3.2
-#    restart: unless-stopped
-#    user: "472"
-#    depends_on:
-#      - prometheus
-#    ports:
-#      - '127.0.0.1:3005:3000'
-#    volumes:
-#      - grafana_data:/var/lib/grafana
-#      - ./grafana/provisioning/:/etc/grafana/provisioning/
-#    # env_file:
-#      # - ./grafana/config.monitoring
-#    networks:
-#      - monitor
-#    profiles:
-#      - grafana-stack
 #      - exporter
