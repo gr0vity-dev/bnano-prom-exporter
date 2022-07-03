@@ -28,7 +28,7 @@ logging.basicConfig(format="%(asctime)s %(levelname)-8s %(message)s", level=logg
 # logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 parser = argparse.ArgumentParser(prog="nano_prom", description="configuration values")
-parser.add_argument("--rpchost", help='"[::1]" default\thost string', default="[::1]", action="store")
+parser.add_argument("--rpchost", help='"[::1]" default\thost string', default="127.0.0.1", action="store")
 parser.add_argument("--rpc_port", help='"7076" default\trpc port', default="7076", action="store")
 parser.add_argument("--datapath", help='"~\\Nano" as default', default="~\\Nano\\", action="store")
 parser.add_argument(
@@ -44,6 +44,7 @@ parser.add_argument("--password", help="Password for basic auth on push_gateway"
 parser.add_argument(
     "--config_path", help="Path to config.ini \nIgnores other CLI arguments", default=None, action="store"
 )
+parser.add_argument("--runid", help="run id to pass to prometheus", default=None, action="store")
 
 args = parser.parse_args()
 cnf = Config(args)

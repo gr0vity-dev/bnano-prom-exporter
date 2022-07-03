@@ -4,5 +4,8 @@ RPC_PORT=17076 docker-compose --profile exporter up
 # start grafana-prometheus stack only
 RPC_PORT=17076 docker-compose --profile grafana-stack up
 
+#build docker
+docker build -t nano-prom-exporter .
+
 # clear data
 docker-compose rm -v -f prometheus

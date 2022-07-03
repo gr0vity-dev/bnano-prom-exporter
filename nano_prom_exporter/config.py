@@ -11,6 +11,7 @@ class Config(object):
         self.node_data_path = args.datapath
         self.hostname = args.hostname
         self.interval = args.interval
+        self.runid = args.runid
 
         logging.info("loaded config, %s", self.__config_file(args.config_path))
 
