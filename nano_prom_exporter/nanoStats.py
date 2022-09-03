@@ -106,13 +106,13 @@ class nanoProm:
         self.StatsObjectsCount = Gauge(
             "nano_stats_objects_count",
             "Objects from nano_stats by count",
-            ["l1", "l2", "l3"],
+            ["l1", "l2"],
             registry=registry,
         )
         self.StatsObjectsSize = Gauge(
             "nano_stats_objects_size",
             "Objects from nano_stats by size",
-            ["l1", "l2", "l3"],
+            ["l1", "l2"],
             registry=registry,
         )
         self.Uptime = Gauge(
@@ -361,10 +361,10 @@ class nanoProm:
         for l1 in stats.StatsObjects:
             for l2 in stats.StatsObjects[l1]:
                 if "size" in stats.StatsObjects[l1][l2]:
-                    self.StatsObjectsSize.labels(l1, l2, "none").set(
+                    self.StatsObjectsSize.labels(l1, l2).set(
                         stats.StatsObjects[l1][l2]["size"]
                     )
-                    self.StatsObjectsCount.labels(l1, l2, "none").set(
+                    self.StatsObjectsCount.labels(l1, l2).set(
                         stats.StatsObjects[l1][l2]["count"]
                     )
                     if os.getenv("NANO_PROM_DEBUG"):
@@ -378,10 +378,10 @@ class nanoProm:
                 else:
                     for l3 in stats.StatsObjects[l1][l2]:
                         if "size" in stats.StatsObjects[l1][l2][l3]:
-                            self.StatsObjectsSize.labels(l1, l2, l3).set(
+                            self.StatsObjectsSize.labels(f"{l1} : {l2}", l3).set(
                                 stats.StatsObjects[l1][l2][l3]["size"]
                             )
-                            self.StatsObjectsCount.labels(l1, l2, l3).set(
+                            self.StatsObjectsCount.labels(f"{l1} : {l2}", l3).set(
                                 stats.StatsObjects[l1][l2][l3]["count"]
                             )
                             if os.getenv("NANO_PROM_DEBUG"):
