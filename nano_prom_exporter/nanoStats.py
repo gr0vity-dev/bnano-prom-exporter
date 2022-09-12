@@ -1,3 +1,4 @@
+from collections import namedtuple
 import logging
 import os
 
@@ -39,6 +40,37 @@ class NetworkUsage(object):
         self.tx = poll.bytes_sent
         self.rx = poll.bytes_recv
 
+from psutil import _pslinux as pslinux
+from psutil import _common as pscommon
+
+mythread = namedtuple('pthread', ['id', 'user_time', 'system_time', 'name'])
+
+def threads(self):
+    thread_ids = os.listdir("%s/%s/task" % (psutil.PROCFS_PATH, self.pid))
+    thread_ids.sort()
+    retlist = []
+    hit_enoent = False
+    for thread_id in thread_ids:
+        fname = "%s/%s/task/%s/stat" % (
+            psutil.PROCFS_PATH, self.pid, thread_id)
+        try:
+            with pscommon.open_text(fname) as f:
+                data = f.read().strip()
+        except FileNotFoundError:
+            # no such file or directory; it means thread
+            # disappeared on us
+            hit_enoent = True
+            continue
+        name = data[data.find('(') + 1:data.rfind(')')]
+        values = data[data.find(')') + 2:].split(' ')
+        utime = float(values[11]) / pslinux.CLOCK_TICKS
+        stime = float(values[12]) / pslinux.CLOCK_TICKS
+        ntuple = mythread(int(thread_id), utime, stime, name)
+        retlist.append(ntuple)
+    if hit_enoent:
+        self._assert_alive()
+    return retlist
+
 
 class nano_nodeProcess:
     def __init__(self, nanoProm):
@@ -57,18 +89,19 @@ class nano_nodeProcess:
         self.nanoProm.network_raw_tx.set(poll.tx)
         self.nanoProm.network_raw_rx.set(poll.rx)
         nano_pid = self.find_procs_by_name("nano_node")
+        assert len(nano_pid) > 0
         for a in nano_pid:
             self.get_threads_cpu_percent(a)
-            self.nanoProm.rss.labels(a.pid).set(a.memory_info().rss)
-            self.nanoProm.vms.labels(a.pid).set(a.memory_info().vms)
-            self.nanoProm.pp.labels(a.pid).set(a.memory_info().paged_pool)
+            # self.nanoProm.rss.labels(a.pid).set(a.memory_info().rss)
+            # self.nanoProm.vms.labels(a.pid).set(a.memory_info().vms)
+            # self.nanoProm.pp.labels(a.pid).set(a.memory_info().paged_pool)
             self.nanoProm.cpu.labels(a.pid).set(a.cpu_percent(interval=0.1))
 
     def get_threads_cpu_percent(self, p, interval=0.1):
         total_percent = p.cpu_percent(interval)
         total_time = sum(p.cpu_times())
-        for t in p.threads():
-            self.nanoProm.threads.labels(p.pid, t.id).set(
+        for t in threads(p):
+            self.nanoProm.threads.labels(p.pid, t.id, t.name).set(
                 total_percent * ((t.system_time + t.user_time) / total_time)
             )
 
@@ -85,7 +118,7 @@ class nanoProm:
             registry=registry,
         )
         self.threads = Gauge(
-            "nano_node_threads", "Thread %", ["pid", "tid"], registry=registry
+            "nano_node_threads", "Thread %", ["pid", "tid", "name"], registry=registry
         )
         self.BlockCount = Gauge(
             "nano_block_count", "Block Count Statistics", ["type"], registry=registry
