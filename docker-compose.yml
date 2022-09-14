@@ -12,8 +12,6 @@ services:
     restart: unless-stopped
     environment:
       - NANO_PROM_DEBUG=${NANO_PROM_DEBUG}
-    command: --rpchost ${RPC_HOST:-host.docker.internal} --rpc_port ${RPC_PORT:-7076} --push_gateway https://prom-exporter.bnano.info
+    command: --rpchost ${RPC_HOST:-host.docker.internal} --rpc_port ${RPC_PORT:-7076} --push_gateway https://prom-exporter.bnano.info --runid ${RUNID}
     networks:
       - nano-beta
-#    profiles:
-#      - exporter
