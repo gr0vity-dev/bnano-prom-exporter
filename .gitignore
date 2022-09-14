@@ -34,7 +34,7 @@ MANIFEST
 *.manifest
 *.spec
 
-venv
+.venv
 
 .vscode/*
 *.code-workspace

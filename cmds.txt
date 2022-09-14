@@ -4,5 +4,8 @@ docker-compose up
 # start run in background :
 docker-compose up -d 
 
+#build docker
+docker build -t nano-prom-exporter .
+
 # clear data
 docker-compose rm -v -f prometheus
