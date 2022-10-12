@@ -40,12 +40,12 @@ class NetworkUsage(object):
         self.tx = poll.bytes_sent
         self.rx = poll.bytes_recv
 
-from psutil import _pslinux as pslinux
-from psutil import _common as pscommon
-
 mythread = namedtuple('pthread', ['id', 'user_time', 'system_time', 'name'])
 
 def threads(self):
+    from psutil import _pslinux as pslinux
+    from psutil import _common as pscommon
+
     thread_ids = os.listdir("%s/%s/task" % (psutil.PROCFS_PATH, self.pid))
     thread_ids.sort()
     retlist = []
