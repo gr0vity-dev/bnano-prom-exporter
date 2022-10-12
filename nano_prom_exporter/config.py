@@ -4,8 +4,8 @@ import logging
 
 class Config(object):
     def __init__(self, args):
-        self.rpc_ip = args.rpchost
-        self.rpc_port = args.rpc_port
+        self.rpc_ip = args.host
+        self.rpc_port = args.port
         self.push_gateway = {args.push_gateway: {
             "username": args.username, "password": args.password}}
         self.node_data_path = args.datapath

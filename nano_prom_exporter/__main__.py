@@ -33,8 +33,8 @@ def generate_runid():
     return runid
 
 parser = argparse.ArgumentParser(prog="nano_prom", description="configuration values")
-parser.add_argument("--rpchost", help='"[::1]" default\thost string', default="127.0.0.1", action="store")
-parser.add_argument("--rpc_port", help='"7076" default\trpc port', default="7076", action="store")
+parser.add_argument("--host", help='"[::1]" default\thost string', default="127.0.0.1", action="store")
+parser.add_argument("--port", help='"7076" default\trpc port', default="7076", action="store")
 parser.add_argument("--datapath", help='"~\\Nano" as default', default="~\\Nano\\", action="store")
 parser.add_argument(
     "--push_gateway",
