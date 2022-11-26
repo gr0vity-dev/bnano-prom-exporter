@@ -50,6 +50,7 @@ parser.add_argument(
     "--config_path", help="Path to config.ini \nIgnores other CLI arguments", default=None, action="store"
 )
 parser.add_argument("--runid", help="job name to pass to prometheus", default=generate_runid(), action="store")
+parser.add_argument("--runid_prefix", help="job name to pass to prometheus", default=None, action="store")
 
 args = parser.parse_args()
 cnf = Config(args)

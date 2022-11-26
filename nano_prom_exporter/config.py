@@ -12,6 +12,8 @@ class Config(object):
         self.hostname = args.hostname
         self.interval = args.interval
         self.runid = args.runid
+        if args.runid_prefix:
+            self.runid = f"{args.runid_prefix}_{self.runid}"
 
         logging.info("loaded config, %s", self.__config_file(args.config_path))
 
