@@ -126,7 +126,7 @@ class nanoProm:
         self.ConfirmationHistory = Gauge(
             "nano_confirmation_history",
             "Block Confirmation Average",
-            ["count"],
+            ["type"],
             registry=registry,
         )
         self.PeersCount = Gauge("nano_node_peer_count", "Peer Cout", registry=registry)
@@ -369,9 +369,9 @@ class nanoProm:
             )
 
         if int(stats.ConfirmationHistory["confirmation_stats"]["count"]) > 0:
-            self.ConfirmationHistory.labels(
-                stats.ConfirmationHistory["confirmation_stats"]["count"]
-            ).set(stats.ConfirmationHistory["confirmation_stats"]["average"])
+            self.ConfirmationHistory.labels("average").set(stats.ConfirmationHistory["confirmation_stats"]["average"])
+            self.ConfirmationHistory.labels("count").set(stats.ConfirmationHistory["confirmation_stats"]["count"])
+
 
         for entry in stats.StatsCounters["entries"]:
             self.StatsCounters.labels(entry["type"], entry["detail"], entry["dir"]).set(
