@@ -1,9 +1,10 @@
 from collections import namedtuple
 import logging
+from math import inf
 import os
 
 import psutil
-from prometheus_client import Gauge, Info, push_to_gateway
+from prometheus_client import Gauge, Histogram, Info, push_to_gateway
 from prometheus_client.exposition import basic_auth_handler
 
 
@@ -123,11 +124,18 @@ class nanoProm:
         self.BlockCount = Gauge(
             "nano_block_count", "Block Count Statistics", ["type"], registry=registry
         )
-        self.ConfirmationHistory = Gauge(
-            "nano_confirmation_history",
+        self.ConfirmationHistoryStats = Gauge(
+            "nano_confirmation_history_stats",
             "Block Confirmation Average",
             ["type"],
             registry=registry,
+        )
+        self.ConfirmationHistoryHist = Histogram(
+            "nano_confirmation_history_hist",
+            "Block Confirmation Histogram",
+            ["type"],
+            registry=registry,
+            buckets=[.1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0, 15.0, 30.0, 60.0, 120.0, 240.0, 300.0, inf]
         )
         self.PeersCount = Gauge("nano_node_peer_count", "Peer Cout", registry=registry)
         self.StatsCounters = Gauge(
@@ -369,9 +377,12 @@ class nanoProm:
             )
 
         if int(stats.ConfirmationHistory["confirmation_stats"]["count"]) > 0:
-            self.ConfirmationHistory.labels("average").set(stats.ConfirmationHistory["confirmation_stats"]["average"])
-            self.ConfirmationHistory.labels("count").set(stats.ConfirmationHistory["confirmation_stats"]["count"])
+            self.ConfirmationHistoryStats.labels("average").set(stats.ConfirmationHistory["confirmation_stats"]["average"])
+            self.ConfirmationHistoryStats.labels("count").set(stats.ConfirmationHistory["confirmation_stats"]["count"])
 
+            self.ConfirmationHistoryHist.clear()
+            for conf in stats.ConfirmationHistory["confirmations"]:
+                self.ConfirmationHistoryHist.labels("duration").observe(int(conf["duration"]) / 1000) # milliseconds to seconds
 
         for entry in stats.StatsCounters["entries"]:
             self.StatsCounters.labels(entry["type"], entry["detail"], entry["dir"]).set(
