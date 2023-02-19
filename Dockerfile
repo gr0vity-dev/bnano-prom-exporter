@@ -1,11 +1,11 @@
-FROM python:3.7
+FROM python:3.8-alpine
 
 WORKDIR /app
+COPY . /app
 
-COPY requirements.txt .
+RUN apk --update-cache add --virtual build-dependencies build-base linux-headers \
+    && pip install -r requirements.txt \
+    && python setup.py install \
+    && apk del build-dependencies 
 
-RUN pip install -r requirements.txt
-
-COPY nano_prom_exporter/ nano_prom_exporter/
-
-ENTRYPOINT [ "python", "-m", "nano_prom_exporter" ]
+ENTRYPOINT [ "nano-prom" ]
