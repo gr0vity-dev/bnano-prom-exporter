@@ -33,7 +33,7 @@ def generate_runid():
     return runid
 
 parser = argparse.ArgumentParser(prog="nano_prom", description="configuration values")
-parser.add_argument("--host", help='"[::1]" default\thost string', default="127.0.0.1", action="store")
+parser.add_argument("--host", help='"localhost" default\thost string', default="localhost", action="store")
 parser.add_argument("--port", help='"7076" default\trpc port', default="7076", action="store")
 parser.add_argument("--datapath", help='"~\\Nano" as default', default="~\\Nano\\", action="store")
 parser.add_argument(
@@ -43,7 +43,7 @@ parser.add_argument(
     action="store",
 )
 parser.add_argument("--hostname", help="instance name to pass to prometheus", default=gethostname(), action="store")
-parser.add_argument("--interval", help="interval to sleep", default="10", action="store", type=int)
+parser.add_argument("--interval", help="interval to sleep", default="3", action="store", type=int)
 parser.add_argument("--username", help="Username for basic auth on push_gateway", default="", action="store")
 parser.add_argument("--password", help="Password for basic auth on push_gateway", default="", action="store")
 parser.add_argument(
