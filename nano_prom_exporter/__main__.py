@@ -70,7 +70,7 @@ def try_gather_process_stats():
         logging.exception(e)
 
 
-def main():
+def main_impl():
     logging.info("Starting main loop")
 
     stats = statsCollection.gatherStats(rpcLatency)
@@ -86,12 +86,16 @@ def main():
     last_time = curr_time
 
 
-if __name__ == "__main__":
-    # RepeatedTimer(cnf.interval, main).start()
+def main():
     while True:
         try:
-            main()
+            main_impl()
         except Exception as e:
             logging.exception(e)
 
-        time.sleep(args.interval)
+        logging.info ("Sleeping for: %s", args.interval)
+        time.sleep(args.interval) 
+
+
+if __name__ == "__main__":
+    main()
