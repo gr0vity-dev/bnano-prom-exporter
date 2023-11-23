@@ -437,6 +437,25 @@ class nanoProm:
                                     stats.StatsObjects[l1][l2][l3]["size"],
                                     stats.StatsObjects[l1][l2][l3]["count"],
                                 )
+                        else: # Doing it this way is so wrong, but I'm tired and it works
+                            for l4 in stats.StatsObjects[l1][l2][l3]:
+                                if "size" in stats.StatsObjects[l1][l2][l3][l4]:
+                                    self.StatsObjectsSize.labels(
+                                        f"{l1} : {l2} : {l3}", l4
+                                    ).set(stats.StatsObjects[l1][l2][l3][l4]["size"])
+                                    self.StatsObjectsCount.labels(
+                                        f"{l1} : {l2} : {l3}", l4
+                                    ).set(stats.StatsObjects[l1][l2][l3][l4]["count"])
+                                    if os.getenv("NANO_PROM_DEBUG"):
+                                        logging.debug(
+                                            "l4 %s %s %s %s %s %s",
+                                            l1,
+                                            l2,
+                                            l3,
+                                            l4,
+                                            stats.StatsObjects[l1][l2][l3][l4]["size"],
+                                            stats.StatsObjects[l1][l2][l3][l4]["count"],
+                                        )
 
     @staticmethod
     def auth_handler(url, method, timeout, headers, data, creds):
