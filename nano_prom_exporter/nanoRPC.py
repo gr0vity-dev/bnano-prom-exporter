@@ -35,6 +35,7 @@ class nanoStats:
         self.ConfirmationHistory = collection['confirmation_history']
         self.Peers = collection['peers']
         self.StatsCounters = collection['stats_counters']
+        self.StatsSamples = collection['stats_samples']
         self.StatsObjects = collection['stats_objects']['node']
         self.Uptime = collection['uptime']['seconds']
         self.Version = collection['version']
@@ -59,6 +60,7 @@ class nanoRPC:
         BlockCount = {"action": "block_count"}
         Peers = {"action": "peers"}
         StatsCounters = {"action": "stats", "type": "counters"}
+        StatsSamples = {"action": "stats", "type": "samples"}
         StatsObjects = {"action": "stats", "type": "objects"}
         ConfirmationHistory = {"action": "confirmation_history"}
         Uptime = {"action": "uptime"}
@@ -72,6 +74,7 @@ class nanoRPC:
             "block_count": BlockCount,
             "peers": Peers,
             "stats_counters": StatsCounters,
+            "stats_samples": StatsSamples,
             "stats_objects": StatsObjects,
             "confirmation_history": ConfirmationHistory,
             "uptime": Uptime,

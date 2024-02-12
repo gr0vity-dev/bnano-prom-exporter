@@ -144,6 +144,12 @@ class nanoProm:
             ["type", "detail", "dir"],
             registry=registry,
         )
+        self.StatsSamples = Histogram(
+            "nano_stats_samples",
+            "Stats Samples",
+            ["type", "sample"],
+            registry=registry,
+        )
         self.StatsObjectsCount = Gauge(
             "nano_stats_objects_count",
             "Objects from nano_stats by count",
@@ -388,6 +394,10 @@ class nanoProm:
             self.StatsCounters.labels(entry["type"], entry["detail"], entry["dir"]).set(
                 entry["value"]
             )
+
+        for entry in stats.StatsSamples["entries"]:
+            for value in entry["values"]:
+                self.StatsSamples.labels(entry["type"], entry["sample"]).observe(int(value))
 
         self.Version.info(
             {
