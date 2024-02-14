@@ -147,7 +147,7 @@ class nanoProm:
         self.StatsSamples = Histogram(
             "nano_stats_samples",
             "Stats Samples",
-            ["type", "sample"],
+            ["sample"],
             registry=registry,
         )
         self.StatsObjectsCount = Gauge(
@@ -397,7 +397,7 @@ class nanoProm:
 
         for entry in stats.StatsSamples["entries"]:
             for value in entry["values"]:
-                self.StatsSamples.labels(entry["type"], entry["sample"]).observe(int(value))
+                self.StatsSamples.labels(entry["sample"]).observe(int(value) / 1000) # milliseconds to seconds
 
         self.Version.info(
             {
