@@ -149,6 +149,7 @@ class nanoProm:
             "Stats Samples",
             ["sample"],
             registry=registry,
+            cumulative=False,
         )
         self.StatsObjectsCount = Gauge(
             "nano_stats_objects_count",

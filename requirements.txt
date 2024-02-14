@@ -1,3 +1,3 @@
-prometheus-client
+prometheus-client @ git+https://github.com/pwojcikdev/prometheus-client-python # fork with non-cumulative histogram
 requests
 psutil
