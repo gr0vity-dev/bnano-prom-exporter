@@ -150,6 +150,7 @@ class nanoProm:
             ["sample"],
             registry=registry,
             cumulative=False,
+            buckets=[.1, .5, 1, 1.5, 3, 5.0, 7.5, 10.0, 15.0, 30.0, 45.0, 60.0, 90.0, 120.0, 240.0, 300.0, 600.0, inf]
         )
         self.StatsObjectsCount = Gauge(
             "nano_stats_objects_count",
