@@ -1,40 +1,35 @@
 version: '3.8'
 
 networks:
-  monitoring: {}
-    
+  prom_monitoring:
+    driver: bridge
+    name: prom_monitoring    
+  nano-local:
+    name: nl_nano-local
+    driver: bridge
+    external: 'true'
+
 volumes:
   grafana_data: {}
   prometheus_data: {}
 
 services:
-  nano-prom-exporter:
-    build: .
-    restart: unless-stopped
-    environment:
-      - NANO_PROM_DEBUG=1
-    command: --rpchost ${RPC_HOST:-host.docker.internal} --rpc_port ${RPC_PORT:-7076} --push_gateway http://pushgateway:9091
-    depends_on:
-      - pushgateway
-    networks:
-      - monitoring
-    profiles:
-      - exporter
       
   pushgateway:
+    container_name: nl_pushgateway
     image: prom/pushgateway:latest
     restart: unless-stopped
     expose:
       - 9091
     networks:
-      - monitoring
+      - prom_monitoring
+      - nano-local
     ports:
       - 9091:9091
-    profiles:
-      - grafana-stack
-      - exporter
+
 
   prometheus:
+    container_name: nl_prometheus
     image: prom/prometheus:latest
     restart: unless-stopped
     volumes:
@@ -42,23 +37,24 @@ services:
       - prometheus_data:/prometheus
     # tmpfs: /prometheus:uid=99
     command:
+      - '--web.enable-admin-api'
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=30d'
     expose:
       - 9090
     networks:
-      - monitoring
+      - prom_monitoring
     ports:
       - 9090:9090
-    profiles:
-      - grafana-stack
-      - exporter
+
 
   grafana:
     # 8.3.3 - terrible dashboard graph flashing
+    container_name: nl_grafana
     image: grafana/grafana:8.3.2
     restart: unless-stopped
     user: "472"
@@ -72,7 +68,4 @@ services:
     # env_file:
       # - ./grafana/config.monitoring
     networks:
-      - monitoring
-    profiles:
-      - grafana-stack
-      - exporter
+      - prom_monitoring
