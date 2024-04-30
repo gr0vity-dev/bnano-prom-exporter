@@ -389,7 +389,7 @@ class nanoProm:
 
             self.ConfirmationHistoryHist.clear()
             for conf in stats.ConfirmationHistory["confirmations"]:
-                duration_seconds = int(conf["duration"]) / 1000  # Convert milliseconds to seconds
+                duration_seconds = int(conf.get("total_duration", conf["duration"] )) / 1000  # Convert milliseconds to seconds
                 priority = str(conf.get("priority_bucket", "0"))  
                 self.ConfirmationHistoryHist.labels(type="duration", priority_bucket=priority).observe(duration_seconds)                
 
