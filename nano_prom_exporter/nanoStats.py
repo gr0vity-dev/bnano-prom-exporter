@@ -58,8 +58,7 @@ def threads(self):
             with pscommon.open_text(fname) as f:
                 data = f.read().strip()
         except FileNotFoundError:
-            # no such file or directory; it means thread
-            # disappeared on us
+            # no such file or directory; it means thread isappeared on us
             hit_enoent = True
             continue
         name = data[data.find('(') + 1:data.rfind(')')]
@@ -127,13 +126,13 @@ class nanoProm:
         self.ConfirmationHistoryStats = Gauge(
             "nano_confirmation_history_stats",
             "Block Confirmation Average",
-            ["type", "priority_bucket"],
+            ["type"],
             registry=registry,
         )
         self.ConfirmationHistoryHist = Histogram(
             "nano_confirmation_history_hist",
             "Block Confirmation Histogram",
-            ["type"],
+            ["type", "priority_bucket"],
             registry=registry,
             buckets=[.1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0, 15.0, 30.0, 60.0, 120.0, 240.0, 300.0, inf]
         )
@@ -388,10 +387,16 @@ class nanoProm:
             self.ConfirmationHistoryStats.labels("average").set(stats.ConfirmationHistory["confirmation_stats"]["average"])
             self.ConfirmationHistoryStats.labels("count").set(stats.ConfirmationHistory["confirmation_stats"]["count"])
 
-            self.ConfirmationHistoryHist.clear()
             for conf in stats.ConfirmationHistory["confirmations"]:
-                self.ConfirmationHistoryHist.labels("duration").observe(int(conf["duration"]) / 1000) # milliseconds to seconds
-                self.ConfirmationHistoryHist.labels("priority_bucket").set(int(conf.get("priority_bucket",0))) 
+                duration_seconds = int(conf["duration"]) / 1000  # Convert milliseconds to seconds
+                priority = str(conf.get("priority_bucket", "0"))  # Ensuring it's a string for labels
+                self.ConfirmationHistoryHist.labels(type="duration", priority_bucket=priority).observe(duration_seconds)
+
+                
+            # self.ConfirmationHistoryHist.clear()
+            # for conf in stats.ConfirmationHistory["confirmations"]:
+            #     self.ConfirmationHistoryHist.labels("duration").observe(int(conf["duration"]) / 1000) # milliseconds to seconds
+            #     self.ConfirmationHistoryHist.labels(conf("duration") , conf.get("priority_bucket", 0)).set(int(conf["duration"]) / 1000)
 
         for entry in stats.StatsCounters["entries"]:
             self.StatsCounters.labels(entry["type"], entry["detail"], entry["dir"]).set(
