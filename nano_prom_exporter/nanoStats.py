@@ -387,16 +387,11 @@ class nanoProm:
             self.ConfirmationHistoryStats.labels("average").set(stats.ConfirmationHistory["confirmation_stats"]["average"])
             self.ConfirmationHistoryStats.labels("count").set(stats.ConfirmationHistory["confirmation_stats"]["count"])
 
+            self.ConfirmationHistoryHist.clear()
             for conf in stats.ConfirmationHistory["confirmations"]:
                 duration_seconds = int(conf["duration"]) / 1000  # Convert milliseconds to seconds
-                priority = str(conf.get("priority_bucket", "0"))  # Ensuring it's a string for labels
-                self.ConfirmationHistoryHist.labels(type="duration", priority_bucket=priority).observe(duration_seconds)
-
-                
-            # self.ConfirmationHistoryHist.clear()
-            # for conf in stats.ConfirmationHistory["confirmations"]:
-            #     self.ConfirmationHistoryHist.labels("duration").observe(int(conf["duration"]) / 1000) # milliseconds to seconds
-            #     self.ConfirmationHistoryHist.labels(conf("duration") , conf.get("priority_bucket", 0)).set(int(conf["duration"]) / 1000)
+                priority = str(conf.get("priority_bucket", "0"))  
+                self.ConfirmationHistoryHist.labels(type="duration", priority_bucket=priority).observe(duration_seconds)                
 
         for entry in stats.StatsCounters["entries"]:
             self.StatsCounters.labels(entry["type"], entry["detail"], entry["dir"]).set(
