@@ -127,7 +127,7 @@ class nanoProm:
         self.ConfirmationHistoryStats = Gauge(
             "nano_confirmation_history_stats",
             "Block Confirmation Average",
-            ["type"],
+            ["type", "priority_bucket"],
             registry=registry,
         )
         self.ConfirmationHistoryHist = Histogram(
@@ -391,6 +391,7 @@ class nanoProm:
             self.ConfirmationHistoryHist.clear()
             for conf in stats.ConfirmationHistory["confirmations"]:
                 self.ConfirmationHistoryHist.labels("duration").observe(int(conf["duration"]) / 1000) # milliseconds to seconds
+                self.ConfirmationHistoryHist.labels("priority_bucket").set(int(conf.get("priority_bucket",0))) 
 
         for entry in stats.StatsCounters["entries"]:
             self.StatsCounters.labels(entry["type"], entry["detail"], entry["dir"]).set(
