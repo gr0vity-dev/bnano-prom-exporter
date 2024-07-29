@@ -12,9 +12,10 @@ This script requires
 """
 
 import argparse
-from datetime import datetime
 import logging
+import os
 import time
+from datetime import datetime
 from socket import gethostname
 
 from prometheus_client import CollectorRegistry, Histogram
@@ -24,13 +25,15 @@ from .nanoRPC import nanoRPC
 from .nanoStats import nano_nodeProcess, nanoProm
 from .repeatedTimer import RepeatedTimer
 
-logging.basicConfig(format="%(asctime)s %(levelname)-8s %(message)s", level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
-# logging.getLogger("requests").setLevel(logging.WARNING)
-# logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.basicConfig(format="%(asctime)s %(levelname)-8s %(message)s", level=os.environ.get("LOGLEVEL", "INFO").upper(), datefmt="%Y-%m-%d %H:%M:%S")
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 
 def generate_runid():
     runid = str(datetime.now()).replace(" ", "_")
     return runid
+
 
 parser = argparse.ArgumentParser(prog="nano_prom", description="configuration values")
 parser.add_argument("--host", help='"localhost" default\thost string', default="localhost", action="store")
@@ -46,9 +49,7 @@ parser.add_argument("--hostname", help="instance name to pass to prometheus", de
 parser.add_argument("--interval", help="interval to sleep", default="3", action="store", type=int)
 parser.add_argument("--username", help="Username for basic auth on push_gateway", default="", action="store")
 parser.add_argument("--password", help="Password for basic auth on push_gateway", default="", action="store")
-parser.add_argument(
-    "--config_path", help="Path to config.ini \nIgnores other CLI arguments", default=None, action="store"
-)
+parser.add_argument("--config_path", help="Path to config.ini \nIgnores other CLI arguments", default=None, action="store")
 parser.add_argument("--runid", help="job name to pass to prometheus", default=generate_runid(), action="store")
 parser.add_argument("--runid_prefix", help="job name to pass to prometheus", default=None, action="store")
 
@@ -63,6 +64,7 @@ process_stats = nano_nodeProcess(promCollection)
 
 last_time = 0
 
+
 def try_gather_process_stats():
     try:
         process_stats.node_process_stats()
@@ -71,10 +73,10 @@ def try_gather_process_stats():
 
 
 def main_impl():
-    logging.info("Starting main loop")
+    logging.debug("Starting main loop")
 
     stats = statsCollection.gatherStats(rpcLatency)
-    
+
     try_gather_process_stats()
 
     promCollection.update(stats)
@@ -82,19 +84,23 @@ def main_impl():
 
     global last_time
     curr_time = time.time()
-    logging.info("Finished main loop, elapsed time: %s", curr_time - last_time)
+    logging.debug("Finished main loop, elapsed time: %s", curr_time - last_time)
     last_time = curr_time
 
 
 def main():
+    logging.info(
+        f"Started, runid: {args.runid} | hostname: {args.hostname} | interval: {args.interval} | push_gateway: {args.push_gateway} | rpc: {args.host}:{args.port}"
+    )
+
     while True:
         try:
             main_impl()
         except Exception as e:
             logging.exception(e)
 
-        logging.info ("Sleeping for: %s", args.interval)
-        time.sleep(args.interval) 
+        logging.debug("Sleeping for: %s", args.interval)
+        time.sleep(args.interval)
 
 
 if __name__ == "__main__":
