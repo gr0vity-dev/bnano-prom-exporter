@@ -33,6 +33,10 @@ class telemetry_raw(object):
         self.maker = m["maker"]
         self.timestamp = m["timestamp"]
         self.active_difficulty = m["active_difficulty"]
+        self.database_backend = m.get("database_backend", "Unknown")
+        self.database_version_major = m.get("database_version_major", "0")
+        self.database_version_minor = m.get("database_version_minor", "0")
+        self.database_version_patch = m.get("database_version_patch", "0")
 
 
 class NetworkUsage(object):
@@ -41,7 +45,9 @@ class NetworkUsage(object):
         self.tx = poll.bytes_sent
         self.rx = poll.bytes_recv
 
+
 mythread = namedtuple('pthread', ['id', 'user_time', 'system_time', 'name'])
+
 
 def threads(self):
     from psutil import _pslinux as pslinux
@@ -134,9 +140,11 @@ class nanoProm:
             "Block Confirmation Histogram",
             ["type", "priority_bucket"],
             registry=registry,
-            buckets=[.1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0, 15.0, 30.0, 60.0, 120.0, 240.0, 300.0, inf]
+            buckets=[.1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0,
+                     15.0, 30.0, 60.0, 120.0, 240.0, 300.0, inf]
         )
-        self.PeersCount = Gauge("nano_node_peer_count", "Peer Cout", registry=registry)
+        self.PeersCount = Gauge("nano_node_peer_count",
+                                "Peer Cout", registry=registry)
         self.StatsCounters = Gauge(
             "nano_stats_counters",
             "Stats Counters",
@@ -149,7 +157,8 @@ class nanoProm:
             ["sample"],
             registry=registry,
             cumulative=False,
-            buckets=[.1, .5, 1, 1.5, 3, 5.0, 7.5, 10.0, 15.0, 30.0, 45.0, 60.0, 90.0, 120.0, 240.0, 300.0, 600.0, inf]
+            buckets=[.1, .5, 1, 1.5, 3, 5.0, 7.5, 10.0, 15.0, 30.0,
+                     45.0, 60.0, 90.0, 120.0, 240.0, 300.0, 600.0, inf]
         )
         self.StatsObjectsCount = Gauge(
             "nano_stats_objects_count",
@@ -166,7 +175,8 @@ class nanoProm:
         self.Uptime = Gauge(
             "nano_uptime", "Uptime Counter in seconds", registry=registry
         )
-        self.Version = Info("nano_version", "Nano Version details", registry=registry)
+        self.Version = Info(
+            "nano_version", "Nano Version details", registry=registry)
         self.rss = Gauge(
             "nano_node_memory_rss",
             "nano_node process memory",
@@ -289,12 +299,6 @@ class nanoProm:
             ["endpoint"],
             registry=registry,
         )
-        self.telemetry_raw_maker = Gauge(
-            "telemetry_raw_maker",
-            "Raw Telemetry maker by endpoint",
-            ["endpoint"],
-            registry=registry,
-        )
         self.telemetry_raw_timestamp = Gauge(
             "telemetry_raw_timestamp",
             "Raw Telemetry updated timestamp by endpoint",
@@ -306,6 +310,24 @@ class nanoProm:
         )
         self.network_raw_rx = Gauge(
             "network_raw_rx", "Raw rx from psutil", registry=registry
+        )
+        self.telemetry_raw_database_version_major = Gauge(
+            "telemetry_raw_database_version_major",
+            "Database Telemetry major version by endpoint",
+            ["endpoint"],
+            registry=registry,
+        )
+        self.telemetry_raw_database_version_minor = Gauge(
+            "telemetry_raw_database_version_minor",
+            "Database Telemetry minor version by endpoint",
+            ["endpoint"],
+            registry=registry,
+        )
+        self.telemetry_raw_database_version_patch = Gauge(
+            "telemetry_raw_database_version_patch",
+            "Database Telemetry patch version by endpoint",
+            ["endpoint"],
+            registry=registry,
         )
 
     def update(self, stats):
@@ -376,22 +398,33 @@ class nanoProm:
             self.telemetry_raw_uptime.labels(endpoint=endpoint.endpoint).set(
                 endpoint.uptime
             )
-            self.telemetry_raw_maker.labels(endpoint=endpoint.endpoint).set(
-                endpoint.maker
-            )
             self.telemetry_raw_timestamp.labels(endpoint=endpoint.endpoint).set(
                 endpoint.timestamp
             )
+            self.telemetry_raw_database_version_major.labels(endpoint=endpoint.endpoint).set(
+                endpoint.database_version_major
+            )
+            self.telemetry_raw_database_version_minor.labels(endpoint=endpoint.endpoint).set(
+                endpoint.database_version_minor
+            )
+            self.telemetry_raw_database_version_patch.labels(endpoint=endpoint.endpoint).set(
+                endpoint.database_version_patch
+            )
 
         if int(stats.ConfirmationHistory["confirmation_stats"]["count"]) > 0:
-            self.ConfirmationHistoryStats.labels("average").set(stats.ConfirmationHistory["confirmation_stats"]["average"])
-            self.ConfirmationHistoryStats.labels("count").set(stats.ConfirmationHistory["confirmation_stats"]["count"])
+            self.ConfirmationHistoryStats.labels("average").set(
+                stats.ConfirmationHistory["confirmation_stats"]["average"])
+            self.ConfirmationHistoryStats.labels("count").set(
+                stats.ConfirmationHistory["confirmation_stats"]["count"])
 
             self.ConfirmationHistoryHist.clear()
             for conf in stats.ConfirmationHistory["confirmations"]:
-                duration_seconds = int(conf.get("total_duration", conf["duration"] )) / 1000  # Convert milliseconds to seconds
-                priority = str(conf.get("priority_bucket", "0"))  
-                self.ConfirmationHistoryHist.labels(type="duration", priority_bucket=priority).observe(duration_seconds)                
+                # Convert milliseconds to seconds
+                duration_seconds = int(
+                    conf.get("total_duration", conf["duration"])) / 1000
+                priority = str(conf.get("priority_bucket", "0"))
+                self.ConfirmationHistoryHist.labels(
+                    type="duration", priority_bucket=priority).observe(duration_seconds)
 
         for entry in stats.StatsCounters["entries"]:
             self.StatsCounters.labels(entry["type"], entry["detail"], entry["dir"]).set(
@@ -400,7 +433,8 @@ class nanoProm:
 
         for entry in stats.StatsSamples["entries"]:
             for value in entry["values"]:
-                self.StatsSamples.labels(entry["sample"]).observe(int(value) / 1000) # milliseconds to seconds
+                self.StatsSamples.labels(entry["sample"]).observe(
+                    int(value) / 1000)  # milliseconds to seconds
 
         self.Version.info(
             {
@@ -450,7 +484,7 @@ class nanoProm:
                                     stats.StatsObjects[l1][l2][l3]["size"],
                                     stats.StatsObjects[l1][l2][l3]["count"],
                                 )
-                        else: # Doing it this way is so wrong, but I'm tired and it works
+                        else:  # Doing it this way is so wrong, but I'm tired and it works
                             for l4 in stats.StatsObjects[l1][l2][l3]:
                                 if "size" in stats.StatsObjects[l1][l2][l3][l4]:
                                     self.StatsObjectsSize.labels(
