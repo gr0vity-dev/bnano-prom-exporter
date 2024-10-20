@@ -151,7 +151,7 @@ class nanoProm:
             ["type", "detail", "dir"],
             registry=registry,
         )
-        self.StatsSamples = Histogram(
+        self.StatsSamplesTimeHist = Histogram(
             "nano_stats_samples",
             "Stats Samples",
             ["sample"],
@@ -159,6 +159,15 @@ class nanoProm:
             cumulative=False,
             buckets=[.1, .5, 1, 1.5, 3, 5.0, 7.5, 10.0, 15.0, 30.0,
                      45.0, 60.0, 90.0, 120.0, 240.0, 300.0, 600.0, inf]
+        )
+
+        self.StatsSamplesVoteHist = Histogram(
+            "nano_stats_samples_votes",
+            "Stats Samples (Vote Packaging Size)",
+            ["sample"],
+            registry=registry,
+            cumulative=False,
+            buckets=[1, 10, 20, 50, 100, 150, 200, 250, 255, float('inf')]
         )
         self.StatsObjectsCount = Gauge(
             "nano_stats_objects_count",
@@ -432,9 +441,12 @@ class nanoProm:
             )
 
         for entry in stats.StatsSamples["entries"]:
-            for value in entry["values"]:
-                self.StatsSamples.labels(entry["sample"]).observe(
-                    int(value) / 1000)  # milliseconds to seconds
+            if entry["max"] == "255":
+                for value in entry["values"]:
+                    self.StatsSamplesVoteHist.labels(sample=entry["sample"]).observe(int(value))
+            else:
+                for value in entry["values"]:
+                    self.StatsSamplesTimeHist.labels(sample=entry["sample"]).observe(int(value) / 1000) #ms)
 
         self.Version.info(
             {
